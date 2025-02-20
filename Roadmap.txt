@@ -1,0 +1,7 @@
+Month	Focus Area	Project
+1	Spring Boot Basics + REST API	Employee Management System
+2	Spring Data JPA + MySQL	Library Management System
+3	Spring Security + JWT	User Authentication System
+4	Microservices + API Gateway	E-Commerce System
+5	Event-Driven Systems	Real-Time Notification System
+6	Cloud & DevOps	Full-Stack SaaS App

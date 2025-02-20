@@ -1,0 +1,10 @@
+target/
+*.jar
+*.war
+*.iml
+.idea/
+.vscode/
+logs/
+hs_err_pid*
+*.class
+node_modules/
