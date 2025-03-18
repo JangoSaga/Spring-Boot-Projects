@@ -4,6 +4,7 @@ target/
 *.iml
 .idea/
 .vscode/
+.git
 logs/
 hs_err_pid*
 *.class
