@@ -1,12 +1,14 @@
 package com.BookStore.Entity;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -30,19 +32,28 @@ public class Book {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "a_id")
-    private int a_id;
-
     @Column(name = "genres")
     private String genres;
+
+    @ManyToOne
+    @JoinColumn(name = "a_id", nullable = false)
+    private Author author;
+
+    public Author getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(Author author) {
+        this.author = author;
+    }
 
     @Column(name = "pages")
     private int pages;
 
     @Column(name = "p_date")
-    private Date date;
+    private LocalDate date;
 
-    public Book(Date date, String genres, int pages, String title) {
+    public Book(LocalDate date, String genres, int pages, String title) {
         this.date = date;
         this.genres = genres;
         this.pages = pages;
@@ -69,14 +80,6 @@ public class Book {
         this.title = title;
     }
 
-    public int getA_id() {
-        return a_id;
-    }
-
-    public void setA_id(int a_id) {
-        this.a_id = a_id;
-    }
-
     public String getGenres() {
         return genres;
     }
@@ -93,17 +96,11 @@ public class Book {
         this.pages = pages;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    @Override
-    public String toString() {
-        return "Book [b_id=" + b_id + ", title=" + title + ", a_id=" + a_id + ", genres=" + genres + ", pages=" + pages
-                + ", date=" + date + "]";
-    }
-
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
