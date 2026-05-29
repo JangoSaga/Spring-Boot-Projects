@@ -5,6 +5,8 @@ target/
 .idea/
 .vscode/
 .git
+open-source-projects/
+
 logs/
 hs_err_pid*
 *.class
