@@ -1,4 +1,5 @@
 package com.spring.medicare.Entities;
+
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -28,6 +29,7 @@ public class User {
 
     private String phone;
 
+    @Builder.Default
     private Boolean isActive = true;
 
     private LocalDateTime createdAt;

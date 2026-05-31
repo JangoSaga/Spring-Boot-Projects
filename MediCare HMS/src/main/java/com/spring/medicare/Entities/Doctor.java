@@ -36,6 +36,7 @@ public class Doctor {
     private String licenseNumber;
 
     private String bio;
-
+    
+    @Builder.Default
     private Boolean isAvailable = true;
 }
