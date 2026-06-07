@@ -33,6 +33,10 @@ public class MedicalRecordMapper {
         }
         return new MedicalRecordResponseDTO(
                 entity.getId(),
+                entity.getPatient() != null ? entity.getPatient().getId() : null,
+                entity.getDoctor() != null ? entity.getDoctor().getId() : null,
+                entity.getAppointment() != null ? entity.getAppointment().getId() : null,
+                entity.getSymptoms(),
                 entity.getDiagnosis(),
                 entity.getPrescription(),
                 entity.getTreatmentNotes(),
