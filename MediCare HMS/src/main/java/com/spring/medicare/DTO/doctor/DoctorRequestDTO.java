@@ -33,6 +33,9 @@ public record DoctorRequestDTO(
         @NotNull(message = "Consultation fee is required")
         Double consultationFee,
 
+        @NotBlank(message = "Password is required")
+        String password,
+
         @NotBlank(message = "License number is required")
         String licenseNumber
 

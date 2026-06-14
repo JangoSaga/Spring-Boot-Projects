@@ -1,11 +1,19 @@
 package com.spring.medicare.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.spring.medicare.DTO.medicalrecord.MedicalRecordRequestDTO;
 import com.spring.medicare.DTO.medicalrecord.MedicalRecordResponseDTO;
@@ -45,8 +53,8 @@ public class MedicalRecordController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMedicalRecord(@PathVariable Long id) {
+    public ResponseEntity<Map<String, String>> deleteMedicalRecord(@PathVariable Long id) {
         medicalRecordService.deleteMedicalRecord(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(Map.of("message", "Medical record deleted successfully"));
     }
 }

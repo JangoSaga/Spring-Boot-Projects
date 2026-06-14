@@ -2,6 +2,7 @@ package com.spring.medicare.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.spring.medicare.DAO.DepartmentRepository;
@@ -27,6 +28,7 @@ public class DoctorService {
     private final DoctorRepository doctorRepository;
     private final DepartmentRepository departmentRepository;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public DoctorResponseDTO createDoctor(DoctorRequestDTO dto) {
         var department = departmentRepository.findById(dto.departmentId())
@@ -35,6 +37,7 @@ public class DoctorService {
                 .fullName(dto.fullName())
                 .email(dto.email())
                 .phone(dto.phone())
+                .passwordHash(passwordEncoder.encode(dto.password()))
                 .role(Role.DOCTOR)
                 .isActive(true)
                 .build();

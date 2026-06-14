@@ -35,5 +35,8 @@ public record PatientRequestDTO(
         @NotBlank(message = "Emergency contact phone is required")
         String emergencyContactPhone,
 
+        @NotBlank(message = "Password is required")
+        String password,
+
         String allergies
 ) {}
