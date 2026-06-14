@@ -1,0 +1,63 @@
+-- Seed script for the MediCare HMS database
+-- Run this after the schema has been created.
+-- Example: psql -U <username> -h <host> -d medicare_hms -f sql/seed_data.psql
+
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+\c medicare_hms;
+
+-- Users
+INSERT INTO users (full_name, email, password_hash, role, phone, is_active)
+VALUES
+    ('Admin User', 'admin@medicare.com', crypt('Admin@123', gen_salt('bf')), 'ADMIN', '555-0100', TRUE),
+    ('Dr. Alice Carter', 'alice.carter@medicare.com', crypt('Doctor@123', gen_salt('bf')), 'DOCTOR', '555-0200', TRUE),
+    ('Dr. Brian Patel', 'brian.patel@medicare.com', crypt('Doctor@123', gen_salt('bf')), 'DOCTOR', '555-0201', TRUE),
+    ('John Doe', 'john.doe@medicare.com', crypt('Patient@123', gen_salt('bf')), 'PATIENT', '555-0300', TRUE),
+    ('Mary Lane', 'mary.lane@medicare.com', crypt('Patient@123', gen_salt('bf')), 'PATIENT', '555-0301', TRUE);
+
+-- Departments
+INSERT INTO departments (name, description)
+VALUES
+    ('Cardiology', 'Heart and vascular care.'),
+    ('Neurology', 'Brain and nervous system care.'),
+    ('Pediatrics', 'Medical care for infants, children, and adolescents.'),
+    ('Orthopedics', 'Bones, muscles, and joints care.');
+
+-- Patients
+INSERT INTO patients (user_id, date_of_birth, gender, blood_group, address, emergency_contact_name, emergency_contact_phone, allergies, medical_history_summary)
+VALUES
+    ((SELECT id FROM users WHERE email = 'john.doe@medicare.com'), '1987-08-15', 'Male', 'A+', '123 Main St, Suite 4', 'Jane Doe', '555-0111', 'Penicillin', 'No major illnesses.'),
+    ((SELECT id FROM users WHERE email = 'mary.lane@medicare.com'), '1994-02-28', 'Female', 'B-', '456 Oak Ave', 'Tom Lane', '555-0112', 'None', 'Asthma diagnosed in childhood.');
+
+-- Doctors
+INSERT INTO doctors (user_id, department_id, specialization, qualification, experience_years, consultation_fee, license_number, bio, is_available)
+VALUES
+    ((SELECT id FROM users WHERE email = 'alice.carter@medicare.com'), (SELECT id FROM departments WHERE name = 'Cardiology'), 'Cardiology', 'MD, Cardiology', 12, 120.00, 'DOC-1001', 'Specializes in non-invasive cardiology and preventive care.', TRUE),
+    ((SELECT id FROM users WHERE email = 'brian.patel@medicare.com'), (SELECT id FROM departments WHERE name = 'Neurology'), 'Neurology', 'MD, Neurology', 9, 135.00, 'DOC-1002', 'Experienced in migraine and epilepsy management.', TRUE);
+
+-- Appointments
+INSERT INTO appointments (patient_id, doctor_id, appointment_date, appointment_time, status, reason, notes)
+VALUES
+    ((SELECT p.id FROM patients p JOIN users u ON p.user_id = u.id WHERE u.email = 'john.doe@medicare.com'),
+     (SELECT d.id FROM doctors d JOIN users u ON d.user_id = u.id WHERE u.email = 'alice.carter@medicare.com'),
+     '2026-06-15', '09:30:00', 'BOOKED', 'Chest discomfort and shortness of breath', 'Patient requested an earlier slot if available.'),
+    ((SELECT p.id FROM patients p JOIN users u ON p.user_id = u.id WHERE u.email = 'mary.lane@medicare.com'),
+     (SELECT d.id FROM doctors d JOIN users u ON d.user_id = u.id WHERE u.email = 'brian.patel@medicare.com'),
+     '2026-06-16', '11:00:00', 'BOOKED', 'Recurring headaches and dizziness', 'First neurology consultation.');
+
+-- Medical Records
+INSERT INTO medical_records (patient_id, doctor_id, appointment_id, symptoms, diagnosis, prescription, treatment_notes, follow_up_date)
+VALUES
+    ((SELECT p.id FROM patients p JOIN users u ON p.user_id = u.id WHERE u.email = 'john.doe@medicare.com'),
+     (SELECT d.id FROM doctors d JOIN users u ON d.user_id = u.id WHERE u.email = 'alice.carter@medicare.com'),
+     (SELECT a.id FROM appointments a JOIN patients p ON a.patient_id = p.id JOIN users u ON p.user_id = u.id WHERE u.email = 'john.doe@medicare.com' AND a.appointment_date = '2026-06-15'),
+     'Mild chest pain, fatigue', 'Suspected angina; order ECG and stress test', 'Aspirin 75mg once daily, lifestyle review', 'Patient should avoid heavy lifting and return in 2 weeks', '2026-06-29'),
+    ((SELECT p.id FROM patients p JOIN users u ON p.user_id = u.id WHERE u.email = 'mary.lane@medicare.com'),
+     (SELECT d.id FROM doctors d JOIN users u ON d.user_id = u.id WHERE u.email = 'brian.patel@medicare.com'),
+     (SELECT a.id FROM appointments a JOIN patients p ON a.patient_id = p.id JOIN users u ON p.user_id = u.id WHERE u.email = 'mary.lane@medicare.com' AND a.appointment_date = '2026-06-16'),
+     'Headaches, nausea', 'Tension headache with possible migraine', 'Ibuprofen 400mg as needed, hydration improve sleep', 'Track headaches with diary and avoid screen strain', '2026-07-02');
+
+-- Sample login credentials:
+-- Admin: admin@medicare.com / Admin@123
+-- Doctor: alice.carter@medicare.com / Doctor@123
+-- Patient: john.doe@medicare.com / Patient@123
