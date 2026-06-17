@@ -1,0 +1,48 @@
+services:
+  - type: web
+    name: medicare-hms
+    env: java
+    plan: free
+    buildCommand: "./mvnw clean package -DskipTests"
+    startCommand: "java -Dserver.port=$PORT -jar target/medicare-0.0.1-SNAPSHOT.jar"
+    envVars:
+      - key: DATABASE_URL
+        scope: build,runtime
+        sync: false
+      - key: DB_USERNAME
+        scope: build,runtime
+        sync: false
+      - key: DB_PASSWORD
+        scope: build,runtime
+        sync: false
+      - key: SECURITY_USER_NAME
+        scope: runtime
+        sync: false
+      - key: SECURITY_USER_PASSWORD
+        scope: runtime
+        sync: false
+      - key: DDL_AUTO
+        value: "update"
+        scope: runtime
+
+databases:
+  - name: medicare-db
+    databaseName: medicare_hms
+    plan: free
+    postgresMajorVersion: 15
+    region: ohio
+
+envVarGroups:
+  - name: Database
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: medicare-db
+          property: connectionString
+
+  - name: Security
+    envVars:
+      - key: SECURITY_USER_NAME
+        value: admin
+      - key: SECURITY_USER_PASSWORD
+        value: changeme123

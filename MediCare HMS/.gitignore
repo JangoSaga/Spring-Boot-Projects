@@ -30,3 +30,18 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Environment Variables ###
+.env
+.env.local
+.env.*.local
+
+### IDE ###
+*.swp
+*.swo
+*~
+.DS_Store
+
+### Logs ###
+*.log
+logs/
