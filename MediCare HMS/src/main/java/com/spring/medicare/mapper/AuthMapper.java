@@ -16,6 +16,7 @@ public class AuthMapper {
         return User.builder()
                 .fullName(dto.fullName())
                 .email(dto.email())
+                .phone(dto.phone())
                 .passwordHash(passwordHash)
                 .role(Role.valueOf(dto.role()))
                 .build();

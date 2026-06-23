@@ -1,6 +1,13 @@
 package com.spring.medicare.DTO.auth;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+
 public record LoginRequestDTO(
+        @NotBlank(message = "Email is required")
+        @Email(message = "Please enter a valid email address")
         String email,
-        String password
+
+        @NotBlank(message = "Password is required")
+        String passwordHash
 ) {}

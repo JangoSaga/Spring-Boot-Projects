@@ -12,4 +12,5 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
     List<Doctor> findBySpecialization(String specialization);
 
     Page<Doctor> findByDepartmentId(Long departmentId, Pageable pageable);
+    java.util.Optional<Doctor> findByUserId(Long userId);
 }
