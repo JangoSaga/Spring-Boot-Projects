@@ -1,0 +1,23 @@
+# Ignore folders
+.git
+.mvn
+.vscode
+target
+bin
+out
+
+# Ignore files
+.dockerignore
+Dockerfile
+render.yaml
+DEPLOYMENT.md
+QUICKSTART_RENDER.md
+README.md
+SETUP_SUMMARY.md
+check-deployment.bat
+check-deployment.sh
+mvnw
+mvnw.cmd
+system.properties
+.env
+.env.example
