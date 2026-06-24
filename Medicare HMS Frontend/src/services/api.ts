@@ -3,7 +3,7 @@ import * as mockDb from './mockData';
 import { Appointment } from '../store/slices/appointmentSlice';
 
 // Backend configuration
-const API_BASE_URL = 'http://localhost:8080';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,

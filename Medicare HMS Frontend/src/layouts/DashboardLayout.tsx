@@ -51,7 +51,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role }) => {
       title: nextState ? 'Mock Data Mode Active' : 'Live Backend Mode Active',
       description: nextState 
         ? 'App is currently running on localized mock tables.' 
-        : 'App will attempt to contact live backend at http://localhost:8080.',
+        : `App will attempt to contact live backend at ${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'}.`,
       variant: nextState ? 'warning' : 'success'
     });
     // Hard refresh page to clear cache and reload data
