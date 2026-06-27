@@ -19,10 +19,10 @@ public class TokenProvider {
     public boolean validateToken(String token) {
         try {
             String decoded = new String(Base64.getUrlDecoder().decode(token), StandardCharsets.UTF_8);
-            String[] parts = decoded.split("\\.");
-            if (parts.length != 2) return false;
-            String payload = parts[0];
-            String signature = parts[1];
+            int lastDotIdx = decoded.lastIndexOf('.');
+            if (lastDotIdx == -1) return false;
+            String payload = decoded.substring(0, lastDotIdx);
+            String signature = decoded.substring(lastDotIdx + 1);
             
             String[] payloadParts = payload.split(":");
             if (payloadParts.length < 4) return false;
@@ -37,17 +37,23 @@ public class TokenProvider {
 
     public String getEmailFromToken(String token) {
         String decoded = new String(Base64.getUrlDecoder().decode(token), StandardCharsets.UTF_8);
-        return decoded.split("\\.")[0].split(":")[0];
+        int lastDotIdx = decoded.lastIndexOf('.');
+        String payload = decoded.substring(0, lastDotIdx);
+        return payload.split(":")[0];
     }
 
     public String getRoleFromToken(String token) {
         String decoded = new String(Base64.getUrlDecoder().decode(token), StandardCharsets.UTF_8);
-        return decoded.split("\\.")[0].split(":")[1];
+        int lastDotIdx = decoded.lastIndexOf('.');
+        String payload = decoded.substring(0, lastDotIdx);
+        return payload.split(":")[1];
     }
 
     public Long getUserIdFromToken(String token) {
         String decoded = new String(Base64.getUrlDecoder().decode(token), StandardCharsets.UTF_8);
-        return Long.parseLong(decoded.split("\\.")[0].split(":")[2]);
+        int lastDotIdx = decoded.lastIndexOf('.');
+        String payload = decoded.substring(0, lastDotIdx);
+        return Long.parseLong(payload.split(":")[2]);
     }
 
     private String sign(String payload) {
