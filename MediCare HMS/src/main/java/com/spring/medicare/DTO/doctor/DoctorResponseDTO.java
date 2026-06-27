@@ -7,11 +7,17 @@ public record DoctorResponseDTO(
 
         String email,
 
+        String phone,
+
         String specialization,
 
         String qualification,
 
         String departmentName,
+
+        Long departmentId,
+
+        Integer experience,
 
         Double consultationFee
 ) {}

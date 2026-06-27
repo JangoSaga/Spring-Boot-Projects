@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { useQuery } from '@tanstack/react-query';
+import { RootState } from '../store';
+import { departmentService, doctorService } from '../services/api';
 import { 
   Activity, Calendar, Heart, Shield, Award, Users, 
   ChevronRight, Stethoscope, ChevronDown, Check, Star, 
@@ -12,12 +16,31 @@ export const LandingPage: React.FC = () => {
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [selectedDept, setSelectedDept] = useState<number | null>(1);
 
+  const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
+
+  const { data: liveDepts } = useQuery({
+    queryKey: ['landingDepts'],
+    queryFn: departmentService.getAll,
+    retry: false
+  });
+
+  const { data: liveDocs } = useQuery({
+    queryKey: ['landingDoctors'],
+    queryFn: doctorService.getAll,
+    retry: false
+  });
+
   const toggleFaq = (index: number) => {
     setActiveFaq(activeFaq === index ? null : index);
   };
 
-  const departments = initialDepartments.slice(0, 6);
-  const doctors = initialDoctors.slice(0, 4);
+  const departments = (liveDepts && liveDepts.length > 0) ? liveDepts.slice(0, 6) : initialDepartments.slice(0, 6);
+  const doctors = (liveDocs && liveDocs.length > 0) ? liveDocs.slice(0, 4) : initialDoctors.slice(0, 4);
+
+  // Default to first department if selectedDept is not in the list
+  const activeDeptId = departments.some((d: any) => d.id === selectedDept) 
+    ? selectedDept 
+    : (departments[0]?.id || null);
 
   // FAQ Data
   const faqs = [
@@ -109,20 +132,32 @@ export const LandingPage: React.FC = () => {
           </nav>
 
           <div className="flex items-center gap-3">
-            <Link 
-              to="/login" 
-              className="flex items-center gap-1.5 px-4 py-2 text-sm font-bold text-slate-700 hover:text-primary transition-colors hover:bg-slate-50 rounded-lg"
-            >
-              <LogIn className="h-4 w-4" />
-              <span>Login</span>
-            </Link>
-            <Link 
-              to="/register" 
-              className="flex items-center gap-1.5 px-4.5 py-2 text-sm font-bold bg-primary hover:bg-primary-hover text-white rounded-lg transition-all shadow-md shadow-primary/10 hover:shadow-primary/20 hover:-translate-y-[1px]"
-            >
-              <UserPlus className="h-4 w-4" />
-              <span>Register</span>
-            </Link>
+            {isAuthenticated && user ? (
+              <Link 
+                to={`/${user.role.toLowerCase()}/dashboard`}
+                className="flex items-center gap-2 px-5 py-2 text-sm font-bold bg-primary hover:bg-primary-hover text-white rounded-lg transition-all shadow-md shadow-primary/10 hover:shadow-primary/25 hover:-translate-y-[1px]"
+              >
+                <span>Go to Dashboard</span>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            ) : (
+              <>
+                <Link 
+                  to="/login" 
+                  className="flex items-center gap-1.5 px-4 py-2 text-sm font-bold text-slate-700 hover:text-primary transition-colors hover:bg-slate-50 rounded-lg"
+                >
+                  <LogIn className="h-4 w-4" />
+                  <span>Login</span>
+                </Link>
+                <Link 
+                  to="/register" 
+                  className="flex items-center gap-1.5 px-4.5 py-2 text-sm font-bold bg-primary hover:bg-primary-hover text-white rounded-lg transition-all shadow-md shadow-primary/10 hover:shadow-primary/20 hover:-translate-y-[1px]"
+                >
+                  <UserPlus className="h-4 w-4" />
+                  <span>Register</span>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -139,20 +174,20 @@ export const LandingPage: React.FC = () => {
             
             {/* Left side info */}
             <div className="lg:col-span-7 text-center lg:text-left space-y-6">
-              <div className="inline-flex items-center gap-1.5 bg-primary/10 text-primary border border-primary/20 px-3 py-1.5 rounded-full text-xs font-semibold">
+              <div className="inline-flex items-center gap-1.5 bg-primary/10 text-primary border border-primary/20 px-3 py-1.5 rounded-full text-xs font-semibold animate-fade-in-up">
                 <span className="h-2 w-2 rounded-full bg-primary animate-pulse"></span>
                 <span>Next-Gen Hospital Management System</span>
               </div>
 
-              <h1 className="font-heading font-extrabold text-slate-800 text-4xl sm:text-5xl lg:text-6xl leading-[1.1] tracking-tight">
+              <h1 className="font-heading font-extrabold text-slate-800 text-4xl sm:text-5xl lg:text-6xl leading-[1.1] tracking-tight animate-fade-in-up delay-100">
                 Advanced Clinical Care, <span className="text-primary">Digitally Simplified</span>
               </h1>
 
-              <p className="text-slate-500 text-sm sm:text-base lg:text-lg max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+              <p className="text-slate-500 text-sm sm:text-base lg:text-lg max-w-2xl mx-auto lg:mx-0 leading-relaxed animate-fade-in-up delay-200">
                 Seamlessly schedule consultations, export secure electronic health summaries, manage inpatient queues, and streamline clinical workflows using our unified healthcare portal.
               </p>
 
-              <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
+              <div className="flex flex-wrap gap-4 justify-center lg:justify-start animate-fade-in-up delay-300">
                 <Link 
                   to="/register" 
                   className="inline-flex items-center gap-2 bg-primary hover:bg-primary-hover text-white font-bold text-sm px-6 py-3.5 rounded-xl transition-all shadow-lg shadow-primary/20 hover:shadow-primary/35 hover:-translate-y-[1px]"
@@ -169,7 +204,7 @@ export const LandingPage: React.FC = () => {
               </div>
 
               {/* Trust Indicators */}
-              <div className="pt-8 border-t border-slate-200/80 grid grid-cols-3 gap-6 max-w-md mx-auto lg:mx-0">
+              <div className="pt-8 border-t border-slate-200/80 grid grid-cols-3 gap-6 max-w-md mx-auto lg:mx-0 animate-fade-in-up delay-400">
                 <div>
                   <h4 className="text-2xl font-bold text-slate-800 font-heading">99.8%</h4>
                   <p className="text-xs text-slate-400 font-medium">Uptime Guarantee</p>
@@ -186,8 +221,8 @@ export const LandingPage: React.FC = () => {
             </div>
 
             {/* Right side Dashboard Preview Card */}
-            <div className="lg:col-span-5 relative">
-              <div className="relative mx-auto max-w-md lg:max-w-none">
+            <div className="lg:col-span-5 relative animate-fade-in-right delay-200">
+              <div className="relative mx-auto max-w-md lg:max-w-none animate-float">
                 {/* Glowing background highlights */}
                 <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-primary to-emerald-500 opacity-20 blur-xl"></div>
                 
@@ -267,25 +302,25 @@ export const LandingPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
             {/* Left selector menu */}
             <div className="md:col-span-4 space-y-2.5">
-              {departments.map((dept) => (
+              {departments.map((dept: any) => (
                 <button
                   key={dept.id}
                   onClick={() => setSelectedDept(dept.id)}
-                  className={`w-full text-left p-4 rounded-xl border transition-all flex items-center justify-between ${
-                    selectedDept === dept.id
+                  className={`w-full text-left p-4 rounded-xl border transition-all duration-300 flex items-center justify-between hover:-translate-y-0.5 hover:shadow-md ${
+                    activeDeptId === dept.id
                       ? 'border-primary bg-primary-light text-primary shadow-sm'
                       : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
                   }`}
                 >
                   <span className="text-sm font-bold font-heading">{dept.name}</span>
-                  <ChevronRight className={`h-4 w-4 transition-transform ${selectedDept === dept.id ? 'translate-x-1' : ''}`} />
+                  <ChevronRight className={`h-4 w-4 transition-transform ${activeDeptId === dept.id ? 'translate-x-1' : ''}`} />
                 </button>
               ))}
             </div>
 
             {/* Right detail card */}
             <div className="md:col-span-8 bg-slate-50 border border-slate-200/80 p-6 sm:p-8 rounded-2xl min-h-[250px] flex flex-col justify-between">
-              {selectedDept !== null ? (
+              {activeDeptId !== null ? (
                 <>
                   <div className="space-y-4">
                     <div className="flex items-center gap-3">
@@ -294,15 +329,15 @@ export const LandingPage: React.FC = () => {
                       </div>
                       <div>
                         <h3 className="text-xl font-bold text-slate-800 font-heading">
-                          {departments.find(d => d.id === selectedDept)?.name} Department
+                          {departments.find((d: any) => d.id === activeDeptId)?.name} Department
                         </h3>
                         <span className="text-xs text-slate-400 font-bold uppercase tracking-wide">
-                          Code: {departments.find(d => d.id === selectedDept)?.code}
+                          Code: {departments.find((d: any) => d.id === activeDeptId)?.code}
                         </span>
                       </div>
                     </div>
                     <p className="text-slate-500 text-sm leading-relaxed">
-                      {departments.find(d => d.id === selectedDept)?.description}
+                      {departments.find((d: any) => d.id === activeDeptId)?.description}
                     </p>
                   </div>
 
@@ -345,8 +380,8 @@ export const LandingPage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {doctors.map((doc) => (
-              <div key={doc.id} className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+            {doctors.map((doc: any) => (
+              <div key={doc.id} className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm flex flex-col justify-between hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300">
                 <div>
                   <div className="h-48 w-full bg-slate-100 relative overflow-hidden">
                     <img 
@@ -412,7 +447,7 @@ export const LandingPage: React.FC = () => {
             {pricingPlans.map((plan, idx) => (
               <div 
                 key={idx} 
-                className={`border rounded-2xl p-6 sm:p-8 flex flex-col justify-between relative ${
+                className={`border rounded-2xl p-6 sm:p-8 flex flex-col justify-between relative hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 ${
                   plan.popular 
                     ? 'border-primary bg-slate-50/50 shadow-md ring-1 ring-primary/30' 
                     : 'border-slate-200 bg-white'

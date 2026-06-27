@@ -8,7 +8,8 @@ import { RootState } from '../store';
 import { loginStart, loginSuccess, loginFailure } from '../store/slices/authSlice';
 import { authService } from '../services/api';
 import { useToast } from '../components/Toast';
-import { Activity, Key, Mail, ShieldAlert } from 'lucide-react';
+import { Activity, Key, Mail, ShieldAlert, Eye, EyeOff } from 'lucide-react';
+import { useState } from 'react';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -22,6 +23,7 @@ export const LoginPage: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -67,18 +69,7 @@ export const LoginPage: React.FC = () => {
     }
   };
 
-  const handleAutofill = (role: 'admin' | 'doctor' | 'patient') => {
-    if (role === 'admin') {
-      setValue('email', 'admin@medicare.com');
-      setValue('password', 'admin123');
-    } else if (role === 'doctor') {
-      setValue('email', 'sarah.jenkins@medicare.com');
-      setValue('password', 'doctor123');
-    } else if (role === 'patient') {
-      setValue('email', 'alex@patient.com');
-      setValue('password', 'patient123');
-    }
-  };
+
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
@@ -100,29 +91,7 @@ export const LoginPage: React.FC = () => {
             <p className="text-sm text-slate-400 leading-relaxed mb-6">
               A comprehensive clinical portal designed to streamline patient care, manage medical queues, schedule appointments, and control administrative operations.
             </p>
-            <div className="flex flex-col gap-3 text-xs border border-slate-800 p-4 rounded-xl bg-slate-950/40">
-              <span className="font-bold text-slate-400 uppercase tracking-wider block mb-1">Click to Autofill Mock Credentials</span>
-              <div className="flex gap-2">
-                <button 
-                  onClick={() => handleAutofill('admin')}
-                  className="px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-white font-medium transition-colors flex-1"
-                >
-                  Admin Portal
-                </button>
-                <button 
-                  onClick={() => handleAutofill('doctor')}
-                  className="px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-white font-medium transition-colors flex-1"
-                >
-                  Dr. Jenkins
-                </button>
-                <button 
-                  onClick={() => handleAutofill('patient')}
-                  className="px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-white font-medium transition-colors flex-1"
-                >
-                  Alex (Patient)
-                </button>
-              </div>
-            </div>
+
           </div>
 
           <div className="text-xs text-slate-500 relative z-10">
@@ -166,20 +135,26 @@ export const LoginPage: React.FC = () => {
             <div>
               <div className="flex justify-between items-center mb-2">
                 <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Password</label>
-                <Link to="/forgot-password" className="text-xs font-medium text-primary hover:underline">Forgot?</Link>
               </div>
               <div className="relative">
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   {...register('password')}
-                  className={`w-full px-4 py-3 pl-10 rounded-lg border text-sm transition-all focus:outline-none focus:ring-2 ${
+                  className={`w-full px-4 py-3 pl-10 pr-10 rounded-lg border text-sm transition-all focus:outline-none focus:ring-2 ${
                     errors.password 
                       ? 'border-red-300 focus:ring-red-100' 
                       : 'border-slate-200 focus:border-primary focus:ring-primary/10'
                   }`}
                 />
                 <Key className="absolute left-3.5 top-3.5 h-4.5 w-4.5 text-slate-400" />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-3.5 text-slate-400 hover:text-slate-600 focus:outline-none"
+                >
+                  {showPassword ? <EyeOff className="h-4.5 w-4.5" /> : <Eye className="h-4.5 w-4.5" />}
+                </button>
               </div>
               {errors.password && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.password.message}</p>}
             </div>

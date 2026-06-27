@@ -34,9 +34,12 @@ public class DoctorMapper {
                 entity.getId(),
                 user != null ? user.getFullName() : null,
                 user != null ? user.getEmail() : null,
+                user != null ? user.getPhone() : null,
                 entity.getSpecialization(),
                 entity.getQualification(),
                 entity.getDepartment() != null ? entity.getDepartment().getName() : null,
+                entity.getDepartment() != null ? entity.getDepartment().getId() : null,
+                entity.getExperienceYears(),
                 entity.getConsultationFee()
         );
     }

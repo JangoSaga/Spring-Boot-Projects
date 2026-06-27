@@ -8,12 +8,12 @@ import { ToastProvider } from './components/Toast';
 // Layouts
 import { DashboardLayout } from './layouts/DashboardLayout';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { GuestRoute } from './components/GuestRoute';
 
 // Public Guest Pages
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
-import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { UnauthorizedPage } from './pages/UnauthorizedPage';
 
 // Admin Pages
@@ -58,12 +58,8 @@ export const App: React.FC = () => {
           <BrowserRouter>
             <Routes>
               
-              {/* ==================================================== */}
-              {/* PUBLIC GUEST ROUTES */}
-              {/* ==================================================== */}
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/login" element={<GuestRoute><LoginPage /></GuestRoute>} />
+              <Route path="/register" element={<GuestRoute><RegisterPage /></GuestRoute>} />
               <Route path="/unauthorized" element={<UnauthorizedPage />} />
               <Route path="/" element={<LandingPage />} />
 

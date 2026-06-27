@@ -8,7 +8,7 @@ import {
   LayoutDashboard, Building2, UserPlus, Users, 
   Calendar, FileText, Settings, Database, Activity, ChevronRight 
 } from 'lucide-react';
-import { isMockMode, setMockMode } from '../services/api';
+
 import { useToast } from '../components/Toast';
 
 interface SidebarLink {
@@ -25,7 +25,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const [mockActive, setMockActive] = useState(isMockMode());
+
 
   const { user } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
@@ -43,22 +43,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role }) => {
     navigate('/login');
   };
 
-  const toggleMockData = () => {
-    const nextState = !mockActive;
-    setMockActive(nextState);
-    setMockMode(nextState);
-    toast({
-      title: nextState ? 'Mock Data Mode Active' : 'Live Backend Mode Active',
-      description: nextState 
-        ? 'App is currently running on localized mock tables.' 
-        : `App will attempt to contact live backend at ${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'}.`,
-      variant: nextState ? 'warning' : 'success'
-    });
-    // Hard refresh page to clear cache and reload data
-    setTimeout(() => {
-      window.location.reload();
-    }, 800);
-  };
+
 
   // Define Links based on role
   const adminLinks: SidebarLink[] = [
@@ -214,20 +199,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role }) => {
               <Menu className="h-6 w-6" />
             </button>
             
-            {/* Mock Database indicator switch */}
-            <div className="flex items-center gap-2">
-              <button 
-                onClick={toggleMockData}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold select-none transition-colors border ${
-                  mockActive 
-                    ? 'bg-amber-50 text-amber-800 border-amber-200 hover:bg-amber-100' 
-                    : 'bg-emerald-50 text-emerald-800 border-emerald-200 hover:bg-emerald-100'
-                }`}
-              >
-                <Database className="h-3 w-3" />
-                <span>{mockActive ? 'Mock Database Active' : 'Live API Mode'}</span>
-              </button>
-            </div>
+
           </div>
 
           <div className="flex items-center gap-4">

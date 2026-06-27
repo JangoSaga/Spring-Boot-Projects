@@ -5,7 +5,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { authService } from '../services/api';
 import { useToast } from '../components/Toast';
-import { Activity, User, Mail, Phone, Lock, HeartHandshake } from 'lucide-react';
+import { Activity, User, Mail, Phone, Lock, HeartHandshake, Eye, EyeOff } from 'lucide-react';
+import { useState } from 'react';
 
 const registerSchema = z.object({
   fullName: z.string().min(3, 'Full name must be at least 3 characters'),
@@ -24,7 +25,10 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = useState(false);
+  const [countryCode, setCountryCode] = useState('+91');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const {
     register,
@@ -49,7 +53,7 @@ export const RegisterPage: React.FC = () => {
         data.fullName,
         data.email,
         data.role,
-        data.phone,
+        `${countryCode}${data.phone}`,
         data.password
       );
       toast({
@@ -116,15 +120,28 @@ export const RegisterPage: React.FC = () => {
 
             <div>
               <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Phone Number</label>
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="+1 555-0100"
-                  {...register('phone')}
-                  className={`w-full px-4 py-2.5 pl-10 rounded-lg border text-sm transition-all focus:outline-none focus:ring-2 ${errors.phone ? 'border-red-300 focus:ring-red-100' : 'border-slate-200 focus:border-primary focus:ring-primary/10'
-                    }`}
-                />
-                <Phone className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-400" />
+              <div className="flex gap-2">
+                <select
+                  value={countryCode}
+                  onChange={(e) => setCountryCode(e.target.value)}
+                  className="px-2.5 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:border-primary focus:ring-primary/10 bg-white font-medium text-slate-700"
+                >
+                  <option value="+91">🇮🇳 +91</option>
+                  <option value="+1">🇺🇸 +1</option>
+                  <option value="+44">🇬🇧 +44</option>
+                  <option value="+971">🇦🇪 +971</option>
+                  <option value="+65">🇸🇬 +65</option>
+                </select>
+                <div className="relative flex-1">
+                  <input
+                    type="text"
+                    placeholder="9876543210"
+                    {...register('phone')}
+                    className={`w-full px-4 py-2.5 pl-10 rounded-lg border text-sm transition-all focus:outline-none focus:ring-2 ${errors.phone ? 'border-red-300 focus:ring-red-100' : 'border-slate-200 focus:border-primary focus:ring-primary/10'
+                      }`}
+                  />
+                  <Phone className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-400" />
+                </div>
               </div>
               {errors.phone && <p className="text-red-500 text-[10px] mt-1 font-medium">{errors.phone.message}</p>}
             </div>
@@ -151,13 +168,20 @@ export const RegisterPage: React.FC = () => {
               <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Password</label>
               <div className="relative">
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   {...register('password')}
-                  className={`w-full px-4 py-2.5 pl-10 rounded-lg border text-sm transition-all focus:outline-none focus:ring-2 ${errors.password ? 'border-red-300 focus:ring-red-100' : 'border-slate-200 focus:border-primary focus:ring-primary/10'
+                  className={`w-full px-4 py-2.5 pl-10 pr-10 rounded-lg border text-sm transition-all focus:outline-none focus:ring-2 ${errors.password ? 'border-red-300 focus:ring-red-100' : 'border-slate-200 focus:border-primary focus:ring-primary/10'
                     }`}
                 />
                 <Lock className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-400" />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-3.5 text-slate-400 hover:text-slate-600 focus:outline-none"
+                >
+                  {showPassword ? <EyeOff className="h-4.5 w-4.5" /> : <Eye className="h-4.5 w-4.5" />}
+                </button>
               </div>
               {errors.password && <p className="text-red-500 text-[10px] mt-1 font-medium">{errors.password.message}</p>}
             </div>
@@ -166,13 +190,20 @@ export const RegisterPage: React.FC = () => {
               <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Confirm Password</label>
               <div className="relative">
                 <input
-                  type="password"
+                  type={showConfirmPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   {...register('confirmPassword')}
-                  className={`w-full px-4 py-2.5 pl-10 rounded-lg border text-sm transition-all focus:outline-none focus:ring-2 ${errors.confirmPassword ? 'border-red-300 focus:ring-red-100' : 'border-slate-200 focus:border-primary focus:ring-primary/10'
+                  className={`w-full px-4 py-2.5 pl-10 pr-10 rounded-lg border text-sm transition-all focus:outline-none focus:ring-2 ${errors.confirmPassword ? 'border-red-300 focus:ring-red-100' : 'border-slate-200 focus:border-primary focus:ring-primary/10'
                     }`}
                 />
                 <Lock className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-400" />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3.5 top-3.5 text-slate-400 hover:text-slate-600 focus:outline-none"
+                >
+                  {showConfirmPassword ? <EyeOff className="h-4.5 w-4.5" /> : <Eye className="h-4.5 w-4.5" />}
+                </button>
               </div>
               {errors.confirmPassword && <p className="text-red-500 text-[10px] mt-1 font-medium">{errors.confirmPassword.message}</p>}
             </div>
