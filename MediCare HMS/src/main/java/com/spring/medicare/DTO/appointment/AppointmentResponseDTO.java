@@ -19,6 +19,8 @@ public record AppointmentResponseDTO(
 
         LocalTime appointmentTime,
 
-        String status
+        String status,
+
+        String symptoms
 
 ) {}

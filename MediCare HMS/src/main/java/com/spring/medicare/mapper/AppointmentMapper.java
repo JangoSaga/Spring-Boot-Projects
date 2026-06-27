@@ -20,7 +20,7 @@ public class AppointmentMapper {
                 .doctor(doctor)
                 .appointmentDate(dto.appointmentDate())
                 .appointmentTime(dto.appointmentTime())
-                .reason(dto.reason())
+                .reason(dto.symptoms())
                 .status(AppointmentStatus.BOOKED)
                 .build();
     }
@@ -39,7 +39,8 @@ public class AppointmentMapper {
                 doctor != null && doctor.getUser() != null ? doctor.getUser().getFullName() : null,
                 entity.getAppointmentDate(),
                 entity.getAppointmentTime(),
-                entity.getStatus() != null ? entity.getStatus().name() : null
+                entity.getStatus() != null ? entity.getStatus().name() : null,
+                entity.getReason()
         );
     }
 }

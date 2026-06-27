@@ -22,7 +22,7 @@ public record AppointmentRequestDTO(
         @NotNull(message = "Appointment time is required")
         LocalTime appointmentTime,
 
-        @NotBlank(message = "Appointment reason is required")
-        String reason
+        @NotBlank(message = "Symptoms description is required")
+        String symptoms
 
 ) {}
